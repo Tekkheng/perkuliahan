@@ -1,0 +1,1 @@
+print("HAI Tek kheng");
