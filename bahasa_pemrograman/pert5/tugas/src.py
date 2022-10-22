@@ -1,4 +1,4 @@
-# Tek kheng - 20210801205
+# Tek kheng - 20210801205 python3
 # pengulangan for 
 loop_cthArray = ["data1","data2","data3",4,5,6]
 def p_for():
