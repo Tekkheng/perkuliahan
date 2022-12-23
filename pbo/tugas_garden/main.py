@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.messagebox import showinfo
+# from tkinter.messagebox import showinfo
 from PIL import Image, ImageTk
 import os
+import database_garden as db
 
 window = tk.Tk()
 window.title("Tugas PBO - Tek Kheng - 20210801205")
@@ -16,12 +17,16 @@ class Plant:
     
     def __init__(self):
         self.__status = 0
+        self.__AirDipakai = 0
+        self.__PupukDipakai = 0
+        self.__level = 0
+
         self.__jumlahAir = 0
         self.__jumlahPupuk = 0
-        self.__level = 0
-        
+
         self.__statusTumbuh = "Benih"
         self.__imgPlant = "Benih.png"
+        self.__condition = False
 
     @property
     def tampilImage(self):
@@ -34,11 +39,28 @@ class Plant:
         return self.__imgPlant
 
     @property
+    def getAirDipakai(self):
+        return self.__AirDipakai
+
+    @property
     def getJumlahAir(self):
         return self.__jumlahAir
+
+    @property
+    def TambahJumlahAir(self):
+        self.__jumlahAir += 1
+
+    @property
+    def getPupukDipakai(self):
+        return self.__PupukDipakai
+
     @property
     def getJumlahPupuk(self):
         return self.__jumlahPupuk
+
+    @property
+    def TambahJumlahPupuk(self):
+        self.__jumlahPupuk += 1
     
     @property
     def getStatusTumbuh(self):
@@ -52,24 +74,30 @@ class Plant:
 
     @property
     def tampilData(self):
-        return "Level : {}\nStatus Tanaman : {}\nBeri Air : {}/3 \nBeri Pupuk : {}/1".format(self.__level,self.__statusTumbuh,self.__jumlahAir,self.__jumlahPupuk)
+        return "Level : {}\nStatus Tanaman : {}\nBeri Air : {}/3 \nBeri Pupuk : {}/1\n\nJumlah Air : {}\nJumlah Pupuk :{}".format(self.__level,self.__statusTumbuh,self.__AirDipakai,self.__PupukDipakai,self.__jumlahAir,self.__jumlahPupuk)
+
+    @property
+    def getDataToko(self):
+        return "Jumlah Air : {}\nJumlah Pupuk : {}".format(self.__jumlahAir,self.__jumlahPupuk)
 
     def beriAir(self):
-        self.__jumlahAir += 1
+        self.__AirDipakai += 1
+        self.__jumlahAir -= 1
         self.cek_kondisi_tumbuh()
     
     def beriPupuk(self):
-        self.__jumlahPupuk += 1
+        self.__PupukDipakai += 1
+        self.__jumlahPupuk -= 1
         self.cek_kondisi_tumbuh()
 
     def cek_kondisi_tumbuh(self):
         if self.__status < 4:
-            if self.__jumlahAir >= 3 and self.__jumlahPupuk >= 1 :
+            if self.__AirDipakai >= 3 and self.__PupukDipakai >= 1 :
                 self.tumbuh()
 
     def tumbuh(self):
-        self.__jumlahAir -= 3
-        self.__jumlahPupuk -= 1
+        self.__AirDipakai -= 3
+        self.__PupukDipakai -= 1
         self.__status += 1
         self.__level += 1
         self.__statusTumbuh = self.getStatusTumbuhText()
@@ -85,6 +113,13 @@ class Plant:
         elif self.__status == 3:
             return "Tanaman Besar"
         return "Berbunga"
+    
+    @property
+    def getCondition(self):
+        return self.__condition 
+    @property
+    def setCondition(self):
+        self.__condition = True
 
 class Anggrek(Plant):
     def __init__(self,jenis_bunga):
@@ -117,31 +152,78 @@ bunga_melati = Melati("Melati")
 def aksi(dataShow,label_tunas,jenis,btn,info):
     if jenis.getStatusTumbuh != "Tanaman Besar" and jenis.getStatusTumbuh != "Berbunga":
         if "1.Beri Air" in btn["text"]:
-            if jenis.getJumlahAir < 3:
-                jenis.beriAir()
-                info["text"] = ""
+            if jenis.getJumlahAir > 0:
+                if jenis.getAirDipakai < 3 :
+                    jenis.beriAir()
+                    info["text"] = ""
+                else:
+                    info["text"] = "Info : Air Sudah Cukup!"
             else:
-                info["text"] = "Info : Air Sudah Cukup!"
+                info["text"] = "Jumlah Air 0, beli dulu di Toko Garden!"
 
         elif "2.Beri Pupuk" in btn["text"]:
-            if jenis.getJumlahPupuk < 1:
-                jenis.beriPupuk()
-                info["text"] = ""
+            if jenis.getJumlahPupuk > 0:
+                if jenis.getPupukDipakai < 1:
+                    jenis.beriPupuk()
+                    info["text"] = ""
+                else:
+                    info["text"] = "Info : Pupuk Sudah Cukup!"
             else:
-                info["text"] = "Info : Pupuk Sudah Cukup!"
+                info["text"] = "Jumlah Pupuk 0, beli dulu di Toko Garden!"
     else:
-        info["text"] = f"{jenis.getJenis()} Sudah Besar! silahkan urus tanaman Lainnya"
         jenis.setStatusBerbunga
+        info["text"] = f"{jenis.getJenis()} Sudah Besar! silahkan urus tanaman Lainnya"
+        
+        if jenis.getCondition == False:
+            db.insertData(jenis.getJenis(),jenis.getStatusTumbuh) 
+            return jenis.setCondition
 
     dataShow["text"] = f"{jenis.tampilData}"
     label_tunas["image"] = f"{jenis.tampilImage}"
 
-def pilihBunga(jenis,*args):  
-    for i in args:
-        i.destroy()
-        
-    frm = Plant.frm
+def aksi_Toko(jenis,Data,info,btn):
+    if "1.Membeli Air" in btn["text"]:
+        if jenis.getJumlahAir < 9:
+            jenis.TambahJumlahAir
+            info["text"] = f""
+        else:
+            info["text"] = "Jumlah Air Maksimal 9"
+    elif "2.Membeli Pupuk" in btn["text"]:
+        if jenis.getJumlahPupuk < 3:
+            jenis.TambahJumlahPupuk
+            info["text"] = f""
+        else:
+            info["text"] = "Jumlah Pupuk Maksimal 3"
+    Data["text"] = f"{jenis.getDataToko}"
 
+def TokoGarden(jenis,*data):
+    for i in data:
+        i.destroy()
+
+    frm = Plant.frm
+    judul = ttk.Label(frm,text=f"Toko Tanaman {jenis.getJenis()} ")
+    judul.pack(padx="10",pady="10",fil="x",expand=True)
+
+    info = ttk.Label(frm,text="")
+    info.pack(padx="10",pady="5",fil="x",expand=True)
+    
+    Data = ttk.Label(frm,text=f"{jenis.getDataToko}")
+    Data.pack(padx="10",pady="5",fil="x",expand=True)
+
+    btn_beliAir = ttk.Button(frm,text="1.Membeli Air",command=lambda : aksi_Toko(jenis,Data,info,btn_beliAir))
+    btn_beliAir.pack(padx=10,pady=5,fil="x",expand=True)
+
+    btn_beliPupuk = ttk.Button(frm,text="2.Membeli Pupuk",command=lambda : aksi_Toko(jenis,Data,info,btn_beliPupuk))
+    btn_beliPupuk.pack(padx=10,pady=5,fil="x",expand=True)
+
+    btn_back = ttk.Button(frm,text="3.Back",command=lambda:pilihBunga(jenis,judul,info,Data,btn_beliAir,btn_beliPupuk,btn_back))
+    btn_back.pack(padx=10,pady=5,fil="x",expand=True)
+
+def pilihBunga(jenis,*data):  
+    for i in data:
+        i.destroy()
+
+    frm = Plant.frm
     judul2 = ttk.Label(frm,text=f"Menu Method {jenis.getJenis()} ")
     judul2.pack(padx="10",pady="10",fil="x",expand=True)
 
@@ -160,12 +242,15 @@ def pilihBunga(jenis,*args):
     btn_beriPupuk = ttk.Button(frm,text="2.Beri Pupuk",command=lambda : aksi(dataShow,label_tunas,jenis,btn_beriPupuk,info))
     btn_beriPupuk.pack(padx=10,pady=5,fil="x",expand=True)
 
-    btn_exit2 = ttk.Button(frm, text="3.Exit",command=lambda: [main(label_tunas,judul2,btn_beriAir,btn_beriPupuk,btn_exit2,info,dataShow)])
+    btn_Toko = ttk.Button(frm,text="3.Toko Garden",command=lambda : TokoGarden(jenis,label_tunas,judul2,btn_beriAir,btn_beriPupuk,btn_Toko,btn_exit2,info,dataShow))
+    btn_Toko.pack(padx=10,pady=5,fil="x",expand=True)
+
+    btn_exit2 = ttk.Button(frm, text="4.Exit",command=lambda: [main(label_tunas,judul2,btn_beriAir,btn_beriPupuk,btn_Toko,btn_exit2,info,dataShow)])
     btn_exit2.pack(padx=10,pady=5,fill="x",expand=True)
 
-def main(*args):
-    if args:
-        for i in args:
+def main(*data):
+    if data:
+        for i in data:
             i.destroy()
 
     frm = Plant.frm
@@ -188,6 +273,7 @@ def main(*args):
     window.mainloop()
 
 if __name__ == "__main__":
+    os.system("clear")
     main()
 
 

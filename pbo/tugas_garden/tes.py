@@ -3,39 +3,24 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 
-window = tk.Tk()
-window.configure(bg="DarkSlateGrey")
-window.geometry("450x500")
-window.resizable(False,False) #=> (x,y)
-window.title("Tugas PBO Garden")
-
-frm = ttk.Frame(window, padding=10)
-frm.pack(padx=10,fil="x",expand=True)
-
-
 class Plant:
-    def __init__(self,window):
-        self.statusText = ttk.Label(frm,text="0")
-        self.statusTumbuh = ttk.Label(frm,text="0")
-        self.jumlahAir = ttk.Label(frm,text="0")
-        self.jumlahPupuk = ttk.Label(frm,text="0")
+    def __init__(self):
+        self.statusText = ""
+        self.statusTumbuh = 0
+        self.jumlahAir = 0
+        self.jumlahPupuk = 0
 
     def beriAir(self):
-        value = int(self.jumlahAir["text"]) 
-        self.jumlahAir["text"] = f"{value + 1}"
-        print(self.jumlahAir["text"])
-        # self.cek_kondisi_tumbuh()
-        
+        self.jumlahAir += 1
+        self.cek_kondisi_tumbuh()
+
     def beriPupuk(self):
-        value = int(self.jumlahPupuk["text"]) 
-        self.jumlahAir["text"] = f"{value + 1}"
-        print(self.jumlahPupuk["text"])
-        # self.cek_kondisi_tumbuh()
+        self.jumlahPupuk += 1
+        self.cek_kondisi_tumbuh()
 
     def cek_kondisi_tumbuh(self):
         if self.statusTumbuh < 4:
             if self.jumlahAir >= 3 and self.jumlahPupuk >= 1 :
-                print("ssss")
                 self.tumbuh()
 
     def tumbuh(self):
@@ -47,12 +32,15 @@ class Plant:
         self.displayPlant()
 
     def getStatusText(self):
-        match self.statusTumbuh:
-            case 0: return "Benih"
-            case 1: return "Tunas"
-            case 2: return "Tanaman Kecil"
-            case 3: return "Tanaman Besar"
-        return "berbunga"
+        if self.statusTumbuh == 0:
+            return "Benih"
+        elif self.statusTumbuh == 1:
+            return "Tunas"
+        elif self.statusTumbuh == 2:
+            return "Tanaman Kecil"
+        elif self.statusTumbuh == 3:
+            return "Tanaman Besar"
+        return "Berbunga"
 
     def displayPlant(self):
         print(f"\nStatus : {self.statusText}")
@@ -60,7 +48,7 @@ class Plant:
         print(f"Jumlah Pupuk : {self.jumlahPupuk}")
 
 class Anggrek(Plant):
-    def get_Jenis(self):
+    def get_jenis(self):
         jenis = "Anggrek"
         return jenis
 
@@ -74,28 +62,67 @@ class Melati(Plant):
         jenis = "Melati"
         return jenis
 
-anggrek = Anggrek(window)
-mawar = Mawar(window)
-
-def tampil_method():
-    btn_anggrek.destroy()
-    btn_mawar.destroy()
-
-    btn_beriAir = ttk.Button(frm,text="Beri Air",command=anggrek.beriAir)
-    btn_beriAir.pack(padx=10,pady=5,fil="x",expand=True)
-
-    btn_beriPupuk = ttk.Button(frm,text="Beri Pupuk",command=mawar.beriPupuk)
-    btn_beriPupuk.pack(padx=10,pady=5,fil="x",expand=True)
+anggrek = Anggrek()
+mawar = Mawar()
+melati = Melati()
 
 
-btn_anggrek = ttk.Button(frm,text="Anggrek",command=tampil_method)
-btn_anggrek.pack(padx=10,pady=5,fil="x",expand=True)
+def hasil(jenis):
+    while True:
+        if sistem_operasi == "posix":
+            os.system("clear")
+        elif sistem_operasi == "cls":
+            os.system("cls")
 
-btn_mawar = ttk.Button(frm,text="Mawar",command=tampil_method)
-btn_mawar.pack(padx=10,pady=5,fil="x",expand=True)
+        print(f"{jenis.get_jenis()}".center(30,"="))
+        [print(f"{no+1}.{i}") for no,i in enumerate(["Beri Air","Beri Pupuk","Exit"])]
 
-window.mainloop()
+        jenis.displayPlant()
+        pil = int(input("Pil : "))
 
+        if pil == 1:
+            if jenis.statusTumbuh <= 3 and jenis.jumlahAir <= 2:
+                jenis.beriAir()
+            elif "Berbunga" in jenis.statusText:
+                print("Berbunga")
+                print("Tanaman Sudah Besar, Silahkan urus tanaman lainnya !")
+                e = input("Enter : ")
+            else:
+                print("jumlah air sudah cukup,silahkan tambahkan pupuk!")
+                e = input("Enter : ")
+        elif pil == 2:
+            if jenis.statusTumbuh <= 3 and jenis.jumlahPupuk < 1:
+                    jenis.beriPupuk()
+            elif "Berbunga" in jenis.statusText:
+                print("Berbunga")
+                print("Tanaman Sudah Besar, Silahkan urus tanaman lainnya !")
+                e = input("Enter : ")
+            else:
+                print("jumlah pupuk sudah cukup,silahkan tambahkan air!")
+                e = input("Enter : ")
+        elif pil == 3:
+            break
 
+if __name__ == "__main__":
+    sistem_operasi = os.name
+    
+    while True:
+        if sistem_operasi == "posix":
+            os.system("clear")
+        elif sistem_operasi == "cls":
+            os.system("cls")
 
+        print(f"{' Menu Plant ':=^30}")
+        [print(f"{no+1}.{i}") for no,i in enumerate(["Anggrek","Mawar","Melati","Exit"])]
+        print(f"{'=':=^30}")
 
+        opsi = int(input("\nPilih Bunga : "))
+        if opsi == 1:
+            hasil(anggrek)
+        elif opsi == 2:
+            hasil(mawar)
+        elif opsi == 3:
+            hasil(melati)
+        elif opsi == 4:
+            break
+    print("Akhir Program")
