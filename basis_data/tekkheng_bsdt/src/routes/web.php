@@ -18,13 +18,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api/'], function() use ($router){
-    // user
-    $router->get("/user",["uses"=>"UserController@index"]);
-    $router->post("/user",["uses"=>"UserController@create"]);
-    $router->get("/user/{id}",["uses"=>"UserController@show"]);
-    $router->put("/user/{id}",["uses"=>"UserController@update"]);
-    $router->delete("/user/{id}",["uses"=>"UserController@destroy"]);
-
+    
     // customer
     $router->get("/customer",["uses"=>"CustomerController@index"]);
     $router->post("/customer",["uses"=>"CustomerController@create"]);
@@ -34,5 +28,9 @@ $router->group(['prefix' => 'api/'], function() use ($router){
     
     // sales 
     $router->get("/sales",["uses"=>"SalesController@index"]);
+    $router->post("/sales",["uses"=>"SalesController@create"]);
+    $router->get("/sales/{id}",["uses"=>"SalesController@show"]);
+    $router->put("sales/{id}",["uses"=>"SalesController@update"]);
+    $router->delete("sales/{id}",["uses"=>"SalesController@destroy"]);
 });
 

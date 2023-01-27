@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Sales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use \Carbon\Carbon;
 
-class UserController extends Controller
+class SalesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $query = DB::connection("mysql")->table("users")->get();
+        $query = DB::connection("mysql")->table("sales")->get();
         return response()->json($query,200);
     }
 
@@ -29,13 +29,14 @@ class UserController extends Controller
     {
         $timestamp = \Carbon\Carbon::now()->toDateTimeString();
         $this->validate($request,[
-            "username" => "required",
-            "password" => "required"
+            "nama" => "required",
+            "nim" => "required"
         ]);
         $request["created_at"] = $timestamp;
         $request["updated_at"] = $timestamp;
-        $query = DB::connection("mysql")->table("users")->insert($request->all());
-        return response()->json("Data berhasil Ditambahkan!",200);
+        $query = DB::connection("mysql")->table("sales")->insert($request->all());
+        return response()->json("data berhasil ditambahkan!",200);
+
     }
 
     /**
@@ -52,14 +53,14 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $query = DB::connection("mysql")->table("users")->find($id);
-        if($query == NULL){
-            return response()->json("Data pada id=$id, tidak ada!",404);
+        $query = DB::connection("mysql")->table("sales")->find($id);
+        if ($query == NULL){
+            return response()->json("data pada id=$id, tidak ada!",404);
         }else{
             return response()->json($query,200);
         }
@@ -68,12 +69,12 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $query = DB::connection("mysql")->table("users")->where("id",$id)->get();
+        $query = DB::connection("mysql")->table("sales")->where("id",$id)->get();
         return response()->json("edit $query",200);
     }
 
@@ -81,39 +82,38 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $query = DB::connection("mysql")->table("users")->find($id);
-        if($query==NULL){
-            return response()->json("data pada id=$id,tidak ada!",404);
+        $query = DB::connection("mysql")->table("sales")->find($id);
+        if ($query == NULL){
+            return response()->json("Data pada id=$id, tidak ada!",404);
         }else{
             $timestamp = \Carbon\Carbon::now()->toDateTimeString();
-            $query = DB::connection("mysql")->table("users")->where("id",$id)->update($request->all());
+            $query = DB::connection("mysql")->table("sales")->where("id",$id)->update($request->all());
             $request["updated_at"] = $timestamp;
-            return response()->json("Update data pada id=$id, Berhasil!",200);
+            return response()->json("Data pada id=$id, Berhasil di ubah!",200);
         }
-
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $query = DB::connection("mysql")->table("users")->find($id);
-        if($query == NULL){
-            return response()->json("Gagal Menghapus,karena id=$id, tidak ada!",404);
+        $query = DB::connection("mysql")->table("sales")->find($id);
+        if ($query == NULL){
+            return response()->json("data pada id=$id yang mau dihapus tidak ada!",404);
         }else{
-            $query = DB::connection("mysql")->table("users");
+            $query = DB::connection("mysql")->table("sales");
             $query->find($id);
             $query->delete($id);
-            return response()->json("Data pada id=$id,Berhasil dihapus!",200);
+            return response()->json("data pada id=$id, berhasil dihapus!",200);
         }
     }
 }

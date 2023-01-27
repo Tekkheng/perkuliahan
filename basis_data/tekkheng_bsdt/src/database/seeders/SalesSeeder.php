@@ -4,16 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\Sales;
 use \Carbon\Carbon;
+use Illuminate\Support\Str;
 
-// use Illuminate\Support\Facades\Bash;
-// use Faker\Factory as Faker;
-
-class UserSeeder extends Seeder
+class SalesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -23,11 +19,12 @@ class UserSeeder extends Seeder
     public function run()
     {
         $timestamp = \Carbon\Carbon::now()->toDateTimeString();
-        DB::table("users")->insert([
-            "username" => "akheng",
-            "password" => Str::random(5),
+        DB::table("Sales")->insert([
+            "nama" => Str::random(10),
+            "nim" => 20210801205,
             "created_at" => $timestamp,
             "updated_at" => $timestamp
         ]);
+
     }
 }
