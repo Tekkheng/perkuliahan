@@ -31,7 +31,8 @@ $router->group(['prefix' => 'api/'], function() use ($router){
     $router->get("/customer/{id}",["uses"=>"CustomerController@show"]);
     $router->put("/customer/{id}",["uses"=>"CustomerController@update"]);
     $router->delete("/customer/{id}",["uses"=>"CustomerController@destroy"]);
+    
     // sales 
-
+    $router->get("/sales",["uses"=>"SalesController@index"]);
 });
 
