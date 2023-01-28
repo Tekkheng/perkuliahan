@@ -7,6 +7,6 @@ use App\Models\Customer;
 
 class Customer extends Model
 {
-    protected $connection = "mysql"
-    protected $fillable = ["nama_pelanggan","email","umur","tgl_pesan","created_at","updated_at"];
+    protected $connection = "mysql";
+    protected $fillable = ["nama_pelanggan","email","no_hp","alamat","created_at","updated_at"]
 }

@@ -6,8 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sales;
-use \Carbon\Carbon;
 use Illuminate\Support\Str;
+use \Carbon\Carbon;
 
 class SalesSeeder extends Seeder
 {
@@ -19,12 +19,14 @@ class SalesSeeder extends Seeder
     public function run()
     {
         $timestamp = \Carbon\Carbon::now()->toDateTimeString();
-        DB::table("Sales")->insert([
-            "nama" => Str::random(10),
-            "nim" => 20210801205,
-            "created_at" => $timestamp,
+        DB::table("sales")->insert([
+            "nama_penjual" => Str::random(7),
+            "nama_produk" => Str::random(14),
+            "harga" => 8000,
+            "stok" => 15,
+            "total_penjualan" => 90000,
+            "created_at" => $timestamp, 
             "updated_at" => $timestamp
         ]);
-
     }
 }

@@ -16,8 +16,8 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $query = DB::connection("mysql")->table("sales")->get();
-        return response()->json($query,200);
+        $koneksi = DB::connection("mysql")->table("sales")->get();
+        return response()->json($koneksi,200);
     }
 
     /**
@@ -29,14 +29,16 @@ class SalesController extends Controller
     {
         $timestamp = \Carbon\Carbon::now()->toDateTimeString();
         $this->validate($request,[
-            "nama" => "required",
-            "nim" => "required"
+            "nama_penjual" => "required",
+            "nama_produk" => "required",
+            "harga" => "required",
+            "stok" => "required",
+            "total_penjualan" => "required"
         ]);
         $request["created_at"] = $timestamp;
         $request["updated_at"] = $timestamp;
-        $query = DB::connection("mysql")->table("sales")->insert($request->all());
-        return response()->json("data berhasil ditambahkan!",200);
-
+        $koneksi = DB::connection("mysql")->table("sales")->insert($request->all());
+        return response()->json("data berhasil di insert!",200);
     }
 
     /**
@@ -58,11 +60,11 @@ class SalesController extends Controller
      */
     public function show($id)
     {
-        $query = DB::connection("mysql")->table("sales")->find($id);
-        if ($query == NULL){
+        $koneksi = DB::connection("mysql")->table("sales")->find($id);
+        if ($koneksi == NULL){
             return response()->json("data pada id=$id, tidak ada!",404);
         }else{
-            return response()->json($query,200);
+            return response()->json($koneksi,200);
         }
     }
 
@@ -74,8 +76,8 @@ class SalesController extends Controller
      */
     public function edit($id)
     {
-        $query = DB::connection("mysql")->table("sales")->where("id",$id)->get();
-        return response()->json("edit $query",200);
+        $koneksi = DB::connection("mysql")->table("sales")->where("id",$id)->get();
+        return response()->json("edit $koneksi",200);
     }
 
     /**
@@ -87,14 +89,14 @@ class SalesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $query = DB::connection("mysql")->table("sales")->find($id);
-        if ($query == NULL){
-            return response()->json("Data pada id=$id, tidak ada!",404);
+        $koneksi = DB::connection("mysql")->table("sales")->find($id);
+        if ($koneksi == NULL){
+            return response()->json("data pada id=$id, tidak ada!",404);
         }else{
             $timestamp = \Carbon\Carbon::now()->toDateTimeString();
-            $query = DB::connection("mysql")->table("sales")->where("id",$id)->update($request->all());
+            $koneksi = DB::connection("mysql")->table("sales")->where("id",$id)->update($request->all());
             $request["updated_at"] = $timestamp;
-            return response()->json("Data pada id=$id, Berhasil di ubah!",200);
+            return response()->json("data pada id=$id, berhasil di update!",200);
         }
     }
 
@@ -106,14 +108,14 @@ class SalesController extends Controller
      */
     public function destroy($id)
     {
-        $query = DB::connection("mysql")->table("sales")->find($id);
-        if ($query == NULL){
-            return response()->json("data pada id=$id yang mau dihapus tidak ada!",404);
+        $koneksi = DB::connection("mysql")->table("sales")->find($id);
+        if ($koneksi == NULL){
+            return response()->json("data pada id=$id, tidak ada!",404);
         }else{
-            $query = DB::connection("mysql")->table("sales");
-            $query->find($id);
-            $query->delete($id);
-            return response()->json("data pada id=$id, berhasil dihapus!",200);
+            $koneksi = DB::connection("mysql")->table("sales");
+            $koneksi->find($id);
+            $koneksi->delete($id);
+            return response()->json("data pada id=$id, berhasil di hapus!",200);
         }
     }
 }

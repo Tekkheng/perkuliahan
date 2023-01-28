@@ -5,12 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use \Carbon\Carbon;
+use App\Models\Customer;
 use Illuminate\Support\Str;
-
-// use Illuminate\Support\Facades\Bash;
-// use Faker\Factory as Faker;
-// use App\Models\Customer;
+use \Carbon\Carbon;
 
 class CustomerSeeder extends Seeder
 {
@@ -25,9 +22,9 @@ class CustomerSeeder extends Seeder
         DB::table("customers")->insert([
             "nama_pelanggan" => Str::random(10),
             "email" => Str::random(5)."@gmail.com",
-            "umur" => 17,
-            "tgl_pesan" => "20020117",
-            "created_at" => $timestamp,
+            "no_hp" => "08539320",
+            "alamat" => Str::random(20),
+            "created_at" => $timestamp, 
             "updated_at" => $timestamp
         ]);
     }

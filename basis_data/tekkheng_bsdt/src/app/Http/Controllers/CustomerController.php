@@ -16,9 +16,8 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $query = DB::connection("mysql")->table("customers")->get();
-        return response()->json($query,200);
-
+        $koneksi = DB::connection("mysql")->table("customers")->get();
+        return response()->json($koneksi,200);
     }
 
     /**
@@ -32,13 +31,13 @@ class CustomerController extends Controller
         $this->validate($request,[
             "nama_pelanggan" => "required",
             "email" => "required",
-            "umur" => "required",
-            "tgl_pesan" => "required"
+            "no_hp" => "required",
+            "alamat" => "required"
         ]);
         $request["created_at"] = $timestamp;
         $request["updated_at"] = $timestamp;
-        $query = DB::connection("mysql")->table("customers")->insert($request->all());
-        return response()->json("Data Berhasil Ditambahkan!",200);
+        $koneksi = DB::connection("mysql")->table("customers")->insert($request->all());
+        return response()->json("data berhasil di insert!",200);
     }
 
     /**
@@ -60,11 +59,11 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $query = DB::connection("mysql")->table("customers")->find($id);
-        if ($query == NULL){
-            return response()->json("data kosong!",404);
+        $koneksi = DB::connection("mysql")->table("customers")->find($id);
+        if ($koneksi == NULL){
+            return response()->json("data pada id=$id, tidak ada!",404);
         }else{
-            return response()->json($query,200);
+            return response()->json($koneksi,200);
         }
     }
 
@@ -76,8 +75,8 @@ class CustomerController extends Controller
      */
     public function edit($id)
     {
-        $query = DB::connection("mysql")->table("customers")->where("id",$id)->get();
-        return response()->json("edit $query",200);
+        $koneksi = DB::connection("mysql")->table("customers")->where("id",$id)->get();
+        return response()->json("edit $koneksi",200);
     }
 
     /**
@@ -89,14 +88,14 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $query = DB::connection("mysql")->table("customers")->find($id);
-        if($query == NULL){
-            return response()->json("data yg mau diupdate kosong!",404);
+        $koneksi = DB::connection("mysql")->table("customers")->find($id);
+        if ($koneksi == NULL){
+            return response()->json("data pada id=$id, tidak ada!",404);
         }else{
             $timestamp = \Carbon\Carbon::now()->toDateTimeString();
+            $koneksi = DB::connection("mysql")->table("customers")->where("id",$id)->update($request->all());
             $request["updated_at"] = $timestamp;
-            $query = DB::connection("mysql")->table("customers")->where("id",$id)->update($request->all());
-            return response()->json("data berhasil diubah!",200);
+            return response()->json("data pada id=$id, berhasil di update!",200);
         }
     }
 
@@ -108,14 +107,14 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $query = DB::connection("mysql")->table("customers")->find($id);
-        if($query == NULL){
-            return response()->json("data sudah kosong!",404);
+        $koneksi = DB::connection("mysql")->table("customers")->find($id);
+        if ($koneksi == NULL){
+            return response()->json("data pada id=$id, memang sudah tidak ada!",404);
         }else{
-            $query = DB::connection("mysql")->table("customers");
-            $query->find($id);
-            $query->delete($id);
-            return response()->json("Databerhasil dihapus!",200);
+            $koneksi = DB::connection("mysql")->table("customers");
+            $koneksi->find($id);
+            $koneksi->delete($id);
+            return response()->json("data pada id=$id, berhasil di delete!",200);
         }
     }
 }
